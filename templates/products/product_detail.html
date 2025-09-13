@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Ornaments Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:list' %}" class="text-decoration-none">Products</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:by_category' product.category.id %}" class="text-decoration-none">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6 mb-4">
+            <div class="product-gallery">
+                {% if product.images.all %}
+                    <div class="main-image-container mb-3">
+                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" 
+                             class="img-fluid rounded-lg main-product-image" id="mainImage">
+                        
+                        {% if product.discount_percentage > 0 %}
+                            <div class="discount-badge-large">
+                                -{{ product.discount_percentage|floatformat:0 }}% OFF
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if product.images.count > 1 %}
+                        <div class="thumbnail-images">
+                            <div class="row g-2">
+                                {% for image in product.images.all %}
+                                    <div class="col-3">
+                                        <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" 
+                                             class="img-fluid rounded thumbnail-image" 
+                                             onclick="changeMainImage('{{ image.image.url }}')">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="placeholder-image-large d-flex align-items-center justify-content-center rounded-lg">
+                        <i class="fas fa-gem fa-5x text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Product Details -->
+        <div class="col-lg-6">
+            <div class="product-details">
+                <div class="mb-3">
+                    <span class="badge bg-light text-dark rounded-pill me-2">{{ product.category.name }}</span>
+                    <span class="badge bg-warning text-dark rounded-pill">{{ product.get_material_display }}</span>
+                    {% if product.is_featured %}
+                        <span class="badge bg-primary rounded-pill">Featured</span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="fw-bold mb-3">{{ product.name }}</h1>
+                
+                <div class="price-section mb-4">
+                    {% if product.discount_percentage > 0 %}
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="price-original h4 text-muted">${{ product.price }}</span>
+                            <span class="price-discounted h2 text-primary">${{ product.discounted_price }}</span>
+                            <span class="savings-badge">Save ${{ product.price|floatformat:2|add:"-"|add:product.discounted_price|floatformat:2 }}</span>
+                        </div>
+                    {% else %}
+                        <span class="price-current h2 text-primary">${{ product.price }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info mb-4">
+                    <h5>Product Details</h5>
+                    <p class="text-muted">{{ product.description }}</p>
+                    
+                    <div class="row g-3">
+                        {% if product.size %}
+                            <div class="col-6">
+                                <strong>Size:</strong> {{ product.size }}
+                            </div>
+                        {% endif %}
+                        {% if product.weight %}
+                            <div class="col-6">
+                                <strong>Weight:</strong> {{ product.weight }}
+                            </div>
+                        {% endif %}
+                        <div class="col-6">
+                            <strong>Material:</strong> {{ product.get_material_display }}
+                        </div>
+                        <div class="col-6">
+                            <strong>Availability:</strong> 
+                            {% if product.in_stock %}
+                                <span class="text-success">In Stock ({{ product.stock_quantity }})</span>
+                            {% else %}
+                                <span class="text-danger">Out of Stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add to Cart Section -->
+                {% if product.in_stock %}
+                    <div class="add-to-cart-section">
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control rounded-pill" id="quantity" 
+                                       value="1" min="1" max="{{ product.stock_quantity }}">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mb-4">
+                            <button class="btn btn-primary btn-lg rounded-pill flex-grow-1" id="addToCartBtn">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-outline-secondary btn-lg rounded-circle" id="addToWishlistBtn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning rounded-pill text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        This item is currently out of stock
+                    </div>
+                {% endif %}
+                
+                <!-- Features -->
+                <div class="product-features">
+                    <div class="row g-3 text-center">
+                        <div class="col-4">
+                            <i class="fas fa-shipping-fast fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Free Shipping</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-undo fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Easy Returns</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-certificate fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Authentic</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_products %}
+        <div class="related-products mt-5">
+            <h3 class="fw-bold mb-4">You May Also Like</h3>
+            <div class="row g-4">
+                {% for related_product in related_products %}
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card h-100">
+                            <div class="product-image-container">
+                                {% if related_product.images.all %}
+                                    <img src="{{ related_product.images.first.image.url }}" 
+                                         alt="{{ related_product.name }}" class="card-img-top product-image">
+                                {% else %}
+                                    <div class="placeholder-image d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-gem fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="product-overlay">
+                                    <a href="{{ related_product.get_absolute_url }}" class="btn btn-primary btn-sm rounded-pill">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body text-center">
+                                <h6 class="card-title">{{ related_product.name }}</h6>
+                                <div class="price-section">
+                                    {% if related_product.discount_percentage > 0 %}
+                                        <span class="price-discounted">${{ related_product.discounted_price }}</span>
+                                    {% else %}
+                                        <span class="price-current">${{ related_product.price }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-image-container {
+        position: relative;
+        height: 400px;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .main-product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .main-product-image:hover {
+        transform: scale(1.05);
+    }
+    
+    .thumbnail-image {
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .thumbnail-image:hover, .thumbnail-image.active {
+        border-color: var(--primary-gold);
+        transform: scale(1.05);
+    }
+    
+    .placeholder-image-large {
+        height: 400px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+    
+    .discount-badge-large {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #dc3545;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    
+    .price-original {
+        text-decoration: line-through;
+    }
+    
+    .price-discounted, .price-current {
+        color: var(--primary-gold);
+        font-weight: bold;
+    }
+    
+    .savings-badge {
+        background: #28a745;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .product-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+    }
+    
+    .product-features {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(245, 245, 220, 0.3));
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+    }
+    
+    .breadcrumb {
+        background: none;
+        padding: 0;
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary-gold);
+    }
+    
+    .product-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .product-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.1);
+    }
+    
+    .placeholder-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+    
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('mainImage').src = imageUrl;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-image').forEach(thumb => {
+        thumb.classList.remove('active');
+        if (thumb.src === imageUrl) {
+            thumb.classList.add('active');
+        }
+    });
+}
+
+// Add to cart functionality
+document.getElementById('addToCartBtn')?.addEventListener('click', function() {
+    const quantity = document.getElementById('quantity').value;
+    const productId = {{ product.id }};
+    
+    // Add to cart AJAX call will be implemented with cart functionality
+    console.log('Add to cart:', productId, 'quantity:', quantity);
+});
+
+// Add to wishlist functionality
+document.getElementById('addToWishlistBtn')?.addEventListener('click', function() {
+    const productId = {{ product.id }};
+    
+    // Toggle wishlist AJAX call will be implemented later
+    console.log('Toggle wishlist:', productId);
+    
+    // Toggle heart icon
+    const icon = this.querySelector('i');
+    if (icon.classList.contains('fas')) {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        this.classList.remove('btn-outline-secondary');
+        this.classList.add('btn-outline-danger');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        this.classList.remove('btn-outline-danger');
+        this.classList.add('btn-outline-secondary');
+    }
+});
+
+// Set first thumbnail as active
+document.addEventListener('DOMContentLoaded', function() {
+    const firstThumbnail = document.querySelector('.thumbnail-image');
+    if (firstThumbnail) {
+        firstThumbnail.classList.add('active');
+    }
+});
+</script>
+{% endblock %}

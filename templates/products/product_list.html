@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if category %}{{ category.name }} - {% endif %}Products - Ornaments Store
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card filter-card">
+                <div class="card-header bg-gradient-gold">
+                    <h5 class="mb-0 text-white"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filterForm">
+                        <!-- Search -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Search</label>
+                            <input type="text" name="search" class="form-control rounded-pill" 
+                                   value="{{ search_query }}" placeholder="Search products...">
+                        </div>
+                        
+                        <!-- Categories -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Category</label>
+                            <select name="category" class="form-select rounded-pill">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Material -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Material</label>
+                            <select name="material" class="form-select rounded-pill">
+                                <option value="">All Materials</option>
+                                {% for value, label in materials %}
+                                    <option value="{{ value }}" {% if value == selected_material %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Price Range -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Price Range</label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="number" name="min_price" class="form-control rounded-pill" 
+                                           placeholder="Min" min="0">
+                                </div>
+                                <div class="col">
+                                    <input type="number" name="max_price" class="form-control rounded-pill" 
+                                           placeholder="Max" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">
+                            <i class="fas fa-search me-2"></i>Apply Filters
+                        </button>
+                        <a href="{% url 'products:list' %}" class="btn btn-outline-secondary w-100 mt-2 rounded-pill">
+                            <i class="fas fa-undo me-2"></i>Clear All
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Header with Sort -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold">
+                        {% if category %}{{ category.name }}{% else %}All Products{% endif %}
+                    </h2>
+                    <p class="text-muted">{{ products|length }} product{{ products|length|pluralize }} found</p>
+                </div>
+                <div class="sort-dropdown">
+                    <select name="sort" class="form-select rounded-pill" style="width: auto;" onchange="applySort(this.value)">
+                        <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                        <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="-price" {% if sort_by == '-price' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name: A-Z</option>
+                        <option value="-name" {% if sort_by == '-name' %}selected{% endif %}>Name: Z-A</option>
+                    </select>
+                </div>
+            </div>
+            
+            {% if products %}
+                <div class="row g-4">
+                    {% for product in products %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card product-card h-100">
+                                <div class="product-image-container">
+                                    {% if product.images.all %}
+                                        <img src="{{ product.images.first.image.url }}" 
+                                             alt="{{ product.name }}" class="card-img-top product-image">
+                                    {% else %}
+                                        <div class="placeholder-image d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-gem fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if product.discount_percentage > 0 %}
+                                        <div class="discount-badge">
+                                            -{{ product.discount_percentage|floatformat:0 }}%
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="product-overlay">
+                                        <a href="{{ product.get_absolute_url }}" class="btn btn-primary btn-sm rounded-pill">
+                                            <i class="fas fa-eye me-1"></i>View Details
+                                        </a>
+                                        <button class="btn btn-outline-light btn-sm rounded-pill mt-2 add-to-cart-btn" 
+                                                data-product-id="{{ product.id }}">
+                                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark rounded-pill">{{ product.category.name }}</span>
+                                        <span class="badge bg-warning text-dark rounded-pill">{{ product.get_material_display }}</span>
+                                    </div>
+                                    <h6 class="card-title">{{ product.name }}</h6>
+                                    <p class="card-text text-muted small">{{ product.description|truncatewords:15 }}</p>
+                                    <div class="price-section">
+                                        {% if product.discount_percentage > 0 %}
+                                            <span class="price-original">${{ product.price }}</span>
+                                            <span class="price-discounted">${{ product.discounted_price }}</span>
+                                        {% else %}
+                                            <span class="price-current">${{ product.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if not product.in_stock %}
+                                        <div class="mt-2">
+                                            <span class="badge bg-danger">Out of Stock</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav aria-label="Products pagination" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link rounded-pill me-1" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.material %}&material={{ request.GET.material }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link rounded-pill mx-1">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link rounded-pill mx-1" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.material %}&material={{ request.GET.material }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link rounded-pill ms-1" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.material %}&material={{ request.GET.material }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-5x text-muted mb-3"></i>
+                    <h3>No products found</h3>
+                    <p class="text-muted">Try adjusting your filters or search terms.</p>
+                    <a href="{% url 'products:list' %}" class="btn btn-primary rounded-pill">
+                        <i class="fas fa-arrow-left me-2"></i>View All Products
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-card {
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .bg-gradient-gold {
+        background: linear-gradient(45deg, var(--primary-gold), var(--secondary-gold));
+    }
+    
+    .product-card {
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .product-image-container {
+        position: relative;
+        overflow: hidden;
+        height: 250px;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.1);
+    }
+    
+    .placeholder-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+    
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+    
+    .price-section {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    
+    .price-original {
+        text-decoration: line-through;
+        color: #6c757d;
+        margin-right: 8px;
+    }
+    
+    .price-discounted, .price-current {
+        color: var(--primary-gold);
+        font-size: 1.1rem;
+    }
+    
+    .page-link {
+        color: var(--primary-gold);
+        border: 1px solid var(--primary-gold);
+    }
+    
+    .page-link:hover {
+        background: var(--primary-gold);
+        border-color: var(--primary-gold);
+        color: white;
+    }
+    
+    .page-item.active .page-link {
+        background: var(--primary-gold);
+        border-color: var(--primary-gold);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function applySort(value) {
+    const url = new URL(window.location);
+    url.searchParams.set('sort', value);
+    window.location = url;
+}
+
+// Add to cart functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            // Add to cart AJAX call will be implemented with cart functionality
+            console.log('Add to cart:', productId);
+        });
+    });
+});
+</script>
+{% endblock %}
