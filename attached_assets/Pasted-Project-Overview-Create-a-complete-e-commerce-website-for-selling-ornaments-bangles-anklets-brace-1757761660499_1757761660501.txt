@@ -1,0 +1,337 @@
+Project Overview
+Create a complete e-commerce website for selling ornaments (bangles, anklets, bracelets, earrings, necklaces, rings, etc.) using Django framework on Replit platform.
+Technical Requirements
+Backend Framework
+
+Django 4.x with Python 3.9+
+Database: SQLite (default) with option to switch to MySQL
+Authentication: Django's built-in authentication system
+Admin Panel: Django admin for product and user management
+
+Frontend Technologies
+
+HTML5 for structure
+Bootstrap 5 for responsive design and styling
+Custom CSS for brand-specific styling
+JavaScript for interactive elements
+Font Awesome for icons
+
+Database Schema Requirements
+User Model (extend Django User)
+
+Profile picture
+Phone number
+Address fields (street, city, state, zip)
+Date of birth
+
+Product Model
+
+Product name
+Category (bangles, anklets, bracelets, earrings, necklaces, rings, etc.)
+Description
+Price
+Discount percentage
+Stock quantity
+Product images (multiple images per product)
+Material (gold, silver, artificial, etc.)
+Size/dimensions
+Weight
+Created date
+Is featured (boolean)
+Is active (boolean)
+
+Category Model
+
+Category name
+Category description
+Category image
+Is active
+
+Cart Model
+
+User (foreign key)
+Product (foreign key)
+Quantity
+Date added
+
+Order Model
+
+User (foreign key)
+Order number (auto-generated)
+Total amount
+Order status (pending, confirmed, shipped, delivered, cancelled)
+Shipping address
+Order date
+Delivery date
+
+OrderItem Model
+
+Order (foreign key)
+Product (foreign key)
+Quantity
+Price at time of order
+
+Contact Model
+
+Name
+Email
+Phone
+Subject
+Message
+Date submitted
+Is resolved
+
+Core Functionality Requirements
+1. Authentication System
+
+User Registration: Email/username, password, confirm password, basic details
+User Login: Email/username and password with "Remember me" option
+User Logout: Clear session and redirect to home
+Password Reset: Email-based password reset functionality
+Profile Management: Users can update their profile information
+
+2. Product Management
+
+Product Catalog: Display all products with pagination (12 products per page)
+Product Categories: Filter products by categories
+Product Search: Search by name, description, or category
+Product Details: Individual product pages with image gallery
+Price Filtering: Filter products by price range
+Sort Options: Sort by price (low to high, high to low), newest first, featured
+
+3. Shopping Cart System
+
+Add to Cart: Add products to cart (with quantity selection)
+Cart Management: View, update quantities, remove items
+Cart Persistence: Save cart for logged-in users
+Cart Counter: Display cart item count in navbar
+
+4. Order Management
+
+Checkout Process: Review cart, add shipping details, place order
+Order History: Users can view their past orders
+Order Tracking: Basic order status tracking
+Order Confirmation: Email confirmation (optional, can be simulated)
+
+5. Additional Features
+
+Wishlist: Users can save products for later
+Product Reviews: Users can leave reviews and ratings
+Recently Viewed: Track and display recently viewed products
+Featured Products: Homepage carousel/grid of featured items
+
+Page Structure Requirements
+1. Home Page (/)
+
+Hero section with carousel of featured products
+Categories showcase
+Featured products grid
+Special offers section
+Customer testimonials
+Newsletter signup
+
+2. Products Page (/products/)
+
+Product grid with filters and sorting
+Pagination
+Search functionality
+Category sidebar
+
+3. Product Detail Page (/products/<id>/)
+
+Product image gallery
+Product information and specifications
+Add to cart functionality
+Related products
+Customer reviews section
+
+4. User Authentication Pages
+
+Login Page (/login/): Login form with social login options styling
+Register Page (/register/): Registration form with validation
+Profile Page (/profile/): User profile management
+Password Reset (/password-reset/): Password reset functionality
+
+5. Shopping Pages
+
+Cart Page (/cart/): Shopping cart with item management
+Checkout Page (/checkout/): Order placement form
+Order Confirmation (/order-success/): Order confirmation page
+Order History (/orders/): User order history
+
+6. Static Pages
+
+About Us (/about/): Company information and story
+Services (/services/): Services offered (custom jewelry, repair, etc.)
+Contact (/contact/): Contact form and business information
+Privacy Policy (/privacy/): Privacy policy
+Terms of Service (/terms/): Terms and conditions
+
+7. Admin Features
+
+Django admin interface for managing:
+
+Products and categories
+Orders and customers
+Contact form submissions
+User accounts
+
+
+
+Design Requirements
+Visual Design
+
+Color Scheme: Elegant gold/rose gold with white/cream background
+Typography: Clean, readable fonts (Google Fonts integration)
+Layout: Responsive grid system using Bootstrap
+Images: Placeholder images for products (use placeholder services)
+Icons: Font Awesome icons for UI elements
+
+User Experience
+
+Responsive Design: Mobile-first approach, works on all devices
+Loading States: Show loading indicators for async operations
+Form Validation: Client-side and server-side validation
+Error Handling: User-friendly error messages
+Success Messages: Confirmation messages for actions
+
+File Structure
+ornaments_store/
+├── manage.py
+├── requirements.txt
+├── README.md
+├── .replit
+├── main.py
+├── ornaments_store/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── apps/
+│   ├── __init__.py
+│   ├── accounts/          # User authentication and profiles
+│   ├── products/          # Product catalog and management
+│   ├── cart/              # Shopping cart functionality
+│   ├── orders/            # Order processing
+│   └── core/              # Core utilities and base templates
+├── static/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── fonts/
+├── templates/
+│   ├── base.html
+│   ├── home.html
+│   ├── accounts/
+│   ├── products/
+│   ├── cart/
+│   ├── orders/
+│   └── core/
+└── media/
+    └── products/
+Technical Implementation Details
+Django Apps Structure
+
+accounts: User registration, login, profiles
+products: Product catalog, categories, search
+cart: Shopping cart functionality
+orders: Order processing and management
+core: Shared utilities, base templates, static pages
+
+Key Django Features to Use
+
+Class-based views (ListView, DetailView, CreateView, etc.)
+Django forms with validation
+Django messages framework
+Django pagination
+Django admin customization
+Django static files handling
+Django user authentication system
+
+Database Considerations
+
+Use Django ORM for all database operations
+Implement proper foreign key relationships
+Add database indexes for search fields
+Use Django migrations for database schema
+
+Security Features
+
+CSRF protection on all forms
+User input validation and sanitization
+Secure password handling
+Login required decorators for protected views
+
+Sample Data Requirements
+Create fixtures or management commands to populate the database with:
+
+5-8 product categories
+30-50 sample products with images
+Sample user accounts (including admin)
+Sample orders for demonstration
+
+Deployment Configuration for Replit
+
+Configure main.py for Replit
+Set up .replit configuration file
+Include requirements.txt with all dependencies
+Configure static files serving
+Set up environment variables for sensitive settings
+
+Testing Requirements
+
+Create basic tests for models
+Test authentication flows
+Test cart and order functionality
+Test form validations
+
+Performance Considerations
+
+Optimize database queries (select_related, prefetch_related)
+Implement caching where appropriate
+Optimize image loading
+Minimize CSS/JS file sizes
+
+
+README.md Content Structure
+The project should include a comprehensive README.md file with the following sections:
+
+Project Description
+Features List
+Technology Stack
+Installation Instructions
+Database Setup
+Running the Project
+Admin Panel Access
+Sample Data Loading
+Project Structure
+Contributing Guidelines
+Troubleshooting
+Screenshots (placeholder sections)
+
+
+Additional Notes for Developer
+
+Prioritize functionality over complex design
+Use Bootstrap components extensively to speed up development
+Implement basic SEO meta tags
+Add Google Analytics placeholder code
+Include social media sharing buttons
+Create a sitemap.xml template
+Add basic error pages (404, 500)
+Implement basic logging
+Add pagination to all list views
+Include search functionality with basic filters
+
+Success Criteria
+The project is complete when:
+
+All pages are functional and responsive
+User can register, login, and manage profile
+Products can be browsed, searched, and filtered
+Cart and checkout process works end-to-end
+Admin can manage products and orders
+All forms have proper validation
+Project runs successfully on Replit
+README provides clear setup instructions
