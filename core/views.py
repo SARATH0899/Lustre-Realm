@@ -1,33 +1,37 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.views.generic import TemplateView, CreateView
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .models import Contact
+from .forms import ContactForm
 
 
 class HomeView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>Ornaments Store - Home</h1><p>Django server is running successfully!</p><a href="/admin/">Admin Panel</a>')
+    template_name = 'core/home.html'
 
 
 class AboutView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>About Us</h1>')
+    template_name = 'core/about.html'
 
 
 class ServicesView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>Services</h1>')
+    template_name = 'core/services.html'
 
 
-class ContactView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>Contact</h1>')
+class ContactView(CreateView):
+    model = Contact
+    form_class = ContactForm
+    template_name = 'core/contact.html'
+    success_url = reverse_lazy('core:contact')
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Thank you for your message! We will get back to you soon.')
+        return super().form_valid(form)
 
 
 class PrivacyPolicyView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>Privacy Policy</h1>')
+    template_name = 'core/privacy.html'
 
 
 class TermsView(TemplateView):
-    def get(self, request):
-        return HttpResponse('<h1>Terms of Service</h1>')
+    template_name = 'core/terms.html'
