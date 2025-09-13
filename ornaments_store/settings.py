@@ -125,6 +125,14 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Razorpay Configuration
+RAZORPAY_API_KEY = os.environ.get('RAZORPAY_API_KEY', 'rzp_test_11111111111111')  # Use environment variable or fallback for testing
+RAZORPAY_API_SECRET = os.environ.get('RAZORPAY_API_SECRET', 'test_secret_key_11111111111111')  # Use environment variable or fallback for testing
+
+# Enable popups (prevents payment popup blocking)
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 

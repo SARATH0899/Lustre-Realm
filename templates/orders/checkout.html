@@ -108,62 +108,55 @@
                         </div>
                     </div>
                     
-                    <!-- Payment Method - DEMO ONLY -->
+                    <!-- Payment Method - Razorpay Integration -->
                     <div class="card border-0 shadow-sm rounded-lg mb-4">
-                        <div class="card-header bg-gradient-warning text-dark">
-                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Payment Method - DEMO ONLY</h5>
+                        <div class="card-header bg-gradient-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Method</h5>
                         </div>
                         <div class="card-body p-4">
-                            <div class="alert alert-warning rounded-3 mb-4">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Demo Mode:</strong> This is a demonstration checkout. No real payments are processed. 
-                                In production, integrate with Stripe, PayPal, or other PCI-compliant payment providers.
+                            <div class="alert alert-success rounded-3 mb-4">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                <strong>Secure Payment:</strong> Your payment is processed securely through Razorpay. 
+                                We support all major credit cards, debit cards, UPI, and net banking.
                             </div>
                             
                             <div class="payment-methods">
                                 <div class="form-check payment-option mb-3">
                                     <input class="form-check-input" type="radio" name="payment_method" 
-                                           id="demo_payment" value="demo" checked>
-                                    <label class="form-check-label payment-label" for="demo_payment">
+                                           id="razorpay_payment" value="card" checked>
+                                    <label class="form-check-label payment-label" for="razorpay_payment">
                                         <div class="d-flex align-items-center">
-                                            <i class="fas fa-play-circle me-3 text-warning"></i>
+                                            <i class="fas fa-credit-card me-3 text-success"></i>
                                             <div>
-                                                <strong>Demo Payment</strong>
-                                                <small class="text-muted d-block">Simulated payment for demonstration purposes</small>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div class="form-check payment-option mb-3 disabled">
-                                    <input class="form-check-input" type="radio" name="payment_method" 
-                                           id="card_disabled" value="card" disabled>
-                                    <label class="form-check-label payment-label text-muted" for="card_disabled">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-credit-card me-3 text-muted"></i>
-                                            <div>
-                                                <strong>Credit/Debit Card</strong>
-                                                <small class="text-muted d-block">Available in production with Stripe integration</small>
+                                                <strong>Credit/Debit Card, UPI & Net Banking</strong>
+                                                <small class="text-muted d-block">Secure payment powered by Razorpay</small>
                                                 <div class="payment-icons mt-1">
-                                                    <i class="fab fa-cc-visa text-muted me-1"></i>
-                                                    <i class="fab fa-cc-mastercard text-muted me-1"></i>
-                                                    <i class="fab fa-cc-amex text-muted me-1"></i>
+                                                    <i class="fab fa-cc-visa text-primary me-1"></i>
+                                                    <i class="fab fa-cc-mastercard text-warning me-1"></i>
+                                                    <i class="fab fa-cc-amex text-info me-1"></i>
+                                                    <span class="badge bg-light text-dark ms-2">UPI</span>
+                                                    <span class="badge bg-light text-dark ms-1">Net Banking</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </label>
                                 </div>
-                                <div class="form-check payment-option disabled">
-                                    <input class="form-check-input" type="radio" name="payment_method" 
-                                           id="paypal_disabled" value="paypal" disabled>
-                                    <label class="form-check-label payment-label text-muted" for="paypal_disabled">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fab fa-paypal me-3 text-muted"></i>
-                                            <div>
-                                                <strong>PayPal</strong>
-                                                <small class="text-muted d-block">Available in production with PayPal integration</small>
-                                            </div>
-                                        </div>
-                                    </label>
+                            </div>
+                            
+                            <div class="razorpay-info mt-3">
+                                <div class="row g-2 text-center">
+                                    <div class="col-4">
+                                        <i class="fas fa-lock text-success"></i>
+                                        <p class="small mb-0">256-bit SSL</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fas fa-university text-primary"></i>
+                                        <p class="small mb-0">Bank Grade Security</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fas fa-mobile-alt text-info"></i>
+                                        <p class="small mb-0">Mobile Friendly</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -419,6 +412,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const checkoutForm = document.getElementById('checkoutForm');
@@ -435,9 +430,28 @@ document.addEventListener('DOMContentLoaded', function() {
     checkoutForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Validate required fields
+        const requiredFields = ['full_name', 'email', 'phone_number', 'shipping_address'];
+        let isValid = true;
+        
+        requiredFields.forEach(fieldName => {
+            const field = checkoutForm.querySelector(`[name="${fieldName}"]`);
+            if (!field || !field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            showAlert('error', 'Please fill in all required fields.');
+            return;
+        }
+        
         // Disable button and show loading
         placeOrderBtn.disabled = true;
-        placeOrderBtn.innerHTML = '<div class="loading-spinner me-2"></div><span class="btn-text">Processing Order...</span>';
+        placeOrderBtn.innerHTML = '<div class="loading-spinner me-2"></div><span class="btn-text">Creating Payment...</span>';
         
         // Gather form data
         const formData = new FormData(this);
@@ -447,8 +461,8 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.set('billing_address', formData.get('shipping_address'));
         }
         
-        // Submit order to proper Django URL
-        fetch('{% url "orders:create" %}', {
+        // Create Razorpay order
+        fetch('{% url "orders:create_razorpay_order" %}', {
             method: 'POST',
             body: formData,
             headers: {
@@ -458,24 +472,86 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            if (data.error) {
+                showAlert('error', data.error);
+                resetButton();
+                return;
+            }
+            
+            // Open Razorpay payment modal
+            const options = {
+                key: data.key_id,
+                amount: data.amount,
+                currency: data.currency,
+                name: data.name,
+                description: data.description,
+                order_id: data.order_id,
+                prefill: data.prefill,
+                theme: data.theme,
+                handler: function(response) {
+                    // Payment successful - verify payment
+                    verifyPayment(response, formData);
+                },
+                modal: {
+                    ondismiss: function() {
+                        // Payment cancelled
+                        showAlert('warning', 'Payment was cancelled. Please try again.');
+                        resetButton();
+                    }
+                }
+            };
+            
+            const rzp = new Razorpay(options);
+            rzp.open();
+        })
+        .catch(error => {
+            console.error('Error creating payment:', error);
+            showAlert('error', 'An error occurred while creating payment. Please try again.');
+            resetButton();
+        });
+    });
+    
+    // Verify payment with server
+    function verifyPayment(paymentResponse, originalFormData) {
+        placeOrderBtn.innerHTML = '<div class="loading-spinner me-2"></div><span class="btn-text">Verifying Payment...</span>';
+        
+        const verifyData = new FormData();
+        verifyData.append('razorpay_payment_id', paymentResponse.razorpay_payment_id);
+        verifyData.append('razorpay_order_id', paymentResponse.razorpay_order_id);
+        verifyData.append('razorpay_signature', paymentResponse.razorpay_signature);
+        
+        // Add original form data for order creation
+        for (const [key, value] of originalFormData.entries()) {
+            verifyData.append(key, value);
+        }
+        
+        fetch('{% url "orders:razorpay_payment_handler" %}', {
+            method: 'POST',
+            body: verifyData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
             if (data.success) {
-                // Show success message and redirect
-                showAlert('success', data.message);
+                // Payment verified and order created
+                showAlert('success', 'Payment successful! Your order has been placed.');
                 setTimeout(() => {
                     window.location.href = data.redirect_url;
-                }, 1500);
+                }, 2000);
             } else {
-                // Show error message
-                showAlert('error', data.message);
+                showAlert('error', data.error || 'Payment verification failed. Please contact support.');
                 resetButton();
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showAlert('error', 'An error occurred while processing your order. Please try again.');
+            console.error('Error verifying payment:', error);
+            showAlert('error', 'Payment verification failed. Please contact support with your payment ID: ' + paymentResponse.razorpay_payment_id);
             resetButton();
         });
-    });
+    }
     
     function resetButton() {
         placeOrderBtn.disabled = false;
