@@ -1,0 +1,550 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shipping Information - Ornaments Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="shipping-hero bg-gradient-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-shipping-fast me-3"></i>Shipping Information
+                </h1>
+                <p class="lead mb-0">Fast, secure, and reliable delivery for your luxury jewelry orders</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="shipping-icon">
+                    <i class="fas fa-truck fa-5x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Shipping Options -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center fw-bold mb-5">
+                <i class="fas fa-boxes me-2 text-primary"></i>Shipping Options
+            </h2>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="shipping-option card border-0 shadow-lg rounded-3 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="shipping-icon mb-4">
+                        <i class="fas fa-truck text-success fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Standard Delivery</h5>
+                    <div class="price mb-3">
+                        <span class="h4 text-success fw-bold">FREE</span>
+                    </div>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>5-7 Business Days</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Order Tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Secure Packaging</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Insurance Covered</li>
+                    </ul>
+                    <div class="shipping-note">
+                        <small class="text-muted">On orders above ₹500</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="shipping-option card border-0 shadow-lg rounded-3 h-100 border-primary">
+                <div class="card-header bg-primary text-white text-center">
+                    <small class="fw-bold">MOST POPULAR</small>
+                </div>
+                <div class="card-body text-center p-4">
+                    <div class="shipping-icon mb-4">
+                        <i class="fas fa-rocket text-primary fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Express Delivery</h5>
+                    <div class="price mb-3">
+                        <span class="h4 text-primary fw-bold">₹99</span>
+                    </div>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>2-3 Business Days</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority Handling</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>SMS & Email Updates</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Premium Packaging</li>
+                    </ul>
+                    <div class="shipping-note">
+                        <small class="text-muted">Available in major cities</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="shipping-option card border-0 shadow-lg rounded-3 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="shipping-icon mb-4">
+                        <i class="fas fa-bolt text-warning fa-3x"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Same Day Delivery</h5>
+                    <div class="price mb-3">
+                        <span class="h4 text-warning fw-bold">₹199</span>
+                    </div>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Within 24 Hours</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Real-time Tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>White Glove Service</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Gift Wrapping Available</li>
+                    </ul>
+                    <div class="shipping-note">
+                        <small class="text-muted">Delhi NCR & Mumbai only</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Zones -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center fw-bold mb-5">
+                <i class="fas fa-globe me-2 text-primary"></i>Shipping Zones
+            </h2>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-gradient-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Domestic Shipping</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="fw-bold mb-3">Metro Cities</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Delhi NCR</li>
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Mumbai</li>
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Bangalore</li>
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Chennai</li>
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Kolkata</li>
+                                <li class="mb-1"><i class="fas fa-city text-success me-2"></i>Hyderabad</li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="fw-bold mb-3">Other Cities</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="fas fa-map text-primary me-2"></i>All State Capitals</li>
+                                <li class="mb-1"><i class="fas fa-map text-primary me-2"></i>Tier 2 Cities</li>
+                                <li class="mb-1"><i class="fas fa-map text-primary me-2"></i>District Headquarters</li>
+                                <li class="mb-1"><i class="fas fa-map text-primary me-2"></i>Rural Areas (7-10 days)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="shipping-time mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-2"></i>Standard delivery: 3-7 business days
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-globe-asia me-2"></i>International Shipping</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="fw-bold mb-3">Available Countries</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="fas fa-flag text-info me-2"></i>USA & Canada</li>
+                                <li class="mb-1"><i class="fas fa-flag text-info me-2"></i>UK & Europe</li>
+                                <li class="mb-1"><i class="fas fa-flag text-info me-2"></i>Australia</li>
+                                <li class="mb-1"><i class="fas fa-flag text-info me-2"></i>Singapore</li>
+                                <li class="mb-1"><i class="fas fa-flag text-info me-2"></i>Dubai & UAE</li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="fw-bold mb-3">Shipping Cost</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-1"><i class="fas fa-dollar-sign text-warning me-2"></i>Starting ₹999</li>
+                                <li class="mb-1"><i class="fas fa-shield-alt text-success me-2"></i>Fully Insured</li>
+                                <li class="mb-1"><i class="fas fa-file-invoice text-primary me-2"></i>Customs Handled</li>
+                                <li class="mb-1"><i class="fas fa-search text-info me-2"></i>Trackable</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="shipping-time mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-2"></i>International delivery: 7-14 business days
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Packaging & Security -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-lg rounded-3 h-100">
+                <div class="card-header bg-gradient-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Premium Packaging</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="packaging-features">
+                        <div class="feature mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-shield-alt text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Tamper-Proof Sealing</h6>
+                                    <small class="text-muted">Security seals ensure safe delivery</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-gem text-primary fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Luxury Gift Boxes</h6>
+                                    <small class="text-muted">Beautiful presentation ready boxes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-leaf text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Eco-Friendly Materials</h6>
+                                    <small class="text-muted">Sustainable packaging solutions</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-lg rounded-3 h-100">
+                <div class="card-header bg-gradient-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Security Features</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="security-features">
+                        <div class="feature mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-eye text-primary fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Real-Time Tracking</h6>
+                                    <small class="text-muted">Track your order every step of the way</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-clipboard-check text-success fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Delivery Confirmation</h6>
+                                    <small class="text-muted">Signature required for high-value items</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon me-3">
+                                    <i class="fas fa-headset text-warning fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">24/7 Support</h6>
+                                    <small class="text-muted">Customer support throughout delivery</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Policies -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-3">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-file-contract me-2"></i>Shipping Policies</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-clock text-primary me-2"></i>Processing Time
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">• Orders placed before 2:00 PM are processed same day</li>
+                                <li class="mb-2">• Custom jewelry orders: 3-5 business days</li>
+                                <li class="mb-2">• Gift wrapping adds 1 business day</li>
+                                <li class="mb-2">• Holiday seasons may extend processing time</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-undo text-success me-2"></i>Returns & Exchanges
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">• 30-day hassle-free returns</li>
+                                <li class="mb-2">• Free return shipping on defective items</li>
+                                <li class="mb-2">• Exchange available for size adjustments</li>
+                                <li class="mb-2">• Custom items are non-returnable</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-shield-alt text-warning me-2"></i>Insurance Coverage
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">• All orders automatically insured up to ₹50,000</li>
+                                <li class="mb-2">• Higher value orders require signature confirmation</li>
+                                <li class="mb-2">• Lost or damaged items fully covered</li>
+                                <li class="mb-2">• Insurance claims processed within 7 days</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>Delivery Restrictions
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">• P.O. Box deliveries not available</li>
+                                <li class="mb-2">• Age verification required (18+ years)</li>
+                                <li class="mb-2">• Some remote areas may have extended delivery</li>
+                                <li class="mb-2">• Weather conditions may cause delays</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="shipping-contact mt-4 p-4 bg-light rounded-3">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h6 class="fw-bold mb-2">
+                                    <i class="fas fa-question-circle text-primary me-2"></i>Questions about shipping?
+                                </h6>
+                                <p class="mb-0 text-muted">Our customer service team is here to help with any shipping-related queries.</p>
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg rounded-pill">
+                                    <i class="fas fa-phone me-2"></i>Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--primary-gold) 0%, var(--secondary-gold) 100%);
+    }
+    
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    }
+    
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    
+    .shipping-hero {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .shipping-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.1);
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm10 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .shipping-option {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .shipping-option:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+    }
+    
+    .shipping-option::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .shipping-option:hover::before {
+        left: 100%;
+    }
+    
+    .feature {
+        transition: all 0.3s ease;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    
+    .feature:hover {
+        background: rgba(0,0,0,0.02);
+        transform: translateX(5px);
+    }
+    
+    .feature-icon {
+        width: 60px;
+        text-align: center;
+    }
+    
+    .shipping-contact {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-10px) rotate(1deg); }
+        66% { transform: translateY(-5px) rotate(-1deg); }
+    }
+    
+    .shipping-icon i {
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    @media (max-width: 768px) {
+        .shipping-hero {
+            text-align: center;
+            padding: 3rem 0 !important;
+        }
+        
+        .shipping-hero .col-lg-4 {
+            margin-top: 2rem;
+        }
+        
+        .shipping-option {
+            margin-bottom: 2rem;
+        }
+        
+        .feature {
+            margin-bottom: 2rem;
+        }
+    }
+    
+    .card-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    .price {
+        border-bottom: 2px solid #f8f9fa;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .shipping-time {
+        border-left: 4px solid var(--primary-gold);
+    }
+    
+    .list-unstyled li {
+        padding: 0.2rem 0;
+        border-left: 3px solid transparent;
+        padding-left: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .list-unstyled li:hover {
+        border-left-color: var(--primary-gold);
+        background: rgba(0,0,0,0.02);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add scroll animations
+    const cards = document.querySelectorAll('.card, .shipping-option');
+    
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(20px)';
+                entry.target.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    cards.forEach(card => {
+        observer.observe(card);
+    });
+    
+    // Add hover effect to shipping options
+    const shippingOptions = document.querySelectorAll('.shipping-option');
+    shippingOptions.forEach(option => {
+        option.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+        
+        option.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -35,3 +35,7 @@ class PrivacyPolicyView(TemplateView):
 
 class TermsView(TemplateView):
     template_name = 'core/terms.html'
+
+
+class ShippingView(TemplateView):
+    template_name = 'core/shipping.html'
