@@ -1,0 +1,531 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Ornaments Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Progress Steps -->
+    <div class="checkout-progress mb-5">
+        <div class="row text-center">
+            <div class="col-4">
+                <div class="progress-step completed">
+                    <div class="step-circle">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <p class="small mt-2">Cart</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="progress-step active">
+                    <div class="step-circle">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <p class="small mt-2">Checkout</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="progress-step">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <p class="small mt-2">Complete</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form id="checkoutForm">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-lg-7">
+                <div class="checkout-form-section">
+                    <!-- Shipping Information -->
+                    <div class="card border-0 shadow-sm rounded-lg mb-4">
+                        <div class="card-header bg-gradient-gold text-white">
+                            <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Shipping Information</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Full Name *</label>
+                                    <input type="text" name="full_name" class="form-control rounded-pill" 
+                                           value="{{ user.get_full_name }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Email Address *</label>
+                                    <input type="email" name="email" class="form-control rounded-pill" 
+                                           value="{{ user.email }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Phone Number *</label>
+                                    <input type="tel" name="phone_number" class="form-control rounded-pill" 
+                                           placeholder="+1 (555) 123-4567" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Country *</label>
+                                    <select name="country" class="form-select rounded-pill" required>
+                                        <option value="">Select Country</option>
+                                        <option value="US" selected>United States</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="UK">United Kingdom</option>
+                                        <option value="AU">Australia</option>
+                                        <option value="IN">India</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Shipping Address *</label>
+                                    <textarea name="shipping_address" class="form-control rounded-3" 
+                                              rows="3" placeholder="Enter your complete shipping address..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Billing Information -->
+                    <div class="card border-0 shadow-sm rounded-lg mb-4">
+                        <div class="card-header bg-gradient-secondary text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Billing Information</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="sameAsShipping" checked>
+                                    <label class="form-check-label text-white" for="sameAsShipping">
+                                        Same as shipping
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4" id="billingSection" style="display: none;">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Billing Address</label>
+                                    <textarea name="billing_address" class="form-control rounded-3" 
+                                              rows="3" placeholder="Enter billing address if different from shipping..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Method - DEMO ONLY -->
+                    <div class="card border-0 shadow-sm rounded-lg mb-4">
+                        <div class="card-header bg-gradient-warning text-dark">
+                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Payment Method - DEMO ONLY</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="alert alert-warning rounded-3 mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Demo Mode:</strong> This is a demonstration checkout. No real payments are processed. 
+                                In production, integrate with Stripe, PayPal, or other PCI-compliant payment providers.
+                            </div>
+                            
+                            <div class="payment-methods">
+                                <div class="form-check payment-option mb-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" 
+                                           id="demo_payment" value="demo" checked>
+                                    <label class="form-check-label payment-label" for="demo_payment">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-play-circle me-3 text-warning"></i>
+                                            <div>
+                                                <strong>Demo Payment</strong>
+                                                <small class="text-muted d-block">Simulated payment for demonstration purposes</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="form-check payment-option mb-3 disabled">
+                                    <input class="form-check-input" type="radio" name="payment_method" 
+                                           id="card_disabled" value="card" disabled>
+                                    <label class="form-check-label payment-label text-muted" for="card_disabled">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-credit-card me-3 text-muted"></i>
+                                            <div>
+                                                <strong>Credit/Debit Card</strong>
+                                                <small class="text-muted d-block">Available in production with Stripe integration</small>
+                                                <div class="payment-icons mt-1">
+                                                    <i class="fab fa-cc-visa text-muted me-1"></i>
+                                                    <i class="fab fa-cc-mastercard text-muted me-1"></i>
+                                                    <i class="fab fa-cc-amex text-muted me-1"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="form-check payment-option disabled">
+                                    <input class="form-check-input" type="radio" name="payment_method" 
+                                           id="paypal_disabled" value="paypal" disabled>
+                                    <label class="form-check-label payment-label text-muted" for="paypal_disabled">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fab fa-paypal me-3 text-muted"></i>
+                                            <div>
+                                                <strong>PayPal</strong>
+                                                <small class="text-muted d-block">Available in production with PayPal integration</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Instructions -->
+                    <div class="card border-0 shadow-sm rounded-lg mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Special Instructions</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <textarea name="special_instructions" class="form-control rounded-3" 
+                                      rows="3" placeholder="Any special delivery instructions or gift message..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="col-lg-5">
+                <div class="order-summary-section sticky-top" style="top: 2rem;">
+                    <!-- Order Items -->
+                    <div class="card border-0 shadow-lg rounded-lg mb-4">
+                        <div class="card-header bg-gradient-gold text-white">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Order Summary ({{ cart_items|length }} items)</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="order-items" style="max-height: 300px; overflow-y: auto;">
+                                {% for item in cart_items %}
+                                    <div class="order-item d-flex align-items-center p-3 border-bottom">
+                                        <div class="item-image me-3">
+                                            {% with first_image=item.product.images.first %}
+                                                {% if first_image %}
+                                                    <img src="{{ first_image.image.url }}" 
+                                                         alt="{{ item.product.name }}" 
+                                                         class="img-fluid rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="placeholder-mini d-flex align-items-center justify-content-center rounded"
+                                                         style="width: 60px; height: 60px; background: #f8f9fa;">
+                                                        <i class="fas fa-gem text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                        <div class="item-details flex-grow-1">
+                                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                                            <small class="text-muted">{{ item.product.get_material_display }} • Qty: {{ item.quantity }}</small>
+                                            <div class="price-info">
+                                                {% if item.product.discount_percentage > 0 %}
+                                                    <span class="text-muted small text-decoration-line-through">${{ item.product.price }}</span>
+                                                    <strong class="text-primary">${{ item.product.discounted_price }}</strong>
+                                                {% else %}
+                                                    <strong class="text-primary">${{ item.product.price }}</strong>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="item-total">
+                                            <strong>${{ item.get_total_price|floatformat:2 }}</strong>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Totals -->
+                    <div class="card border-0 shadow-lg rounded-lg mb-4">
+                        <div class="card-body p-4">
+                            <div class="order-totals">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span>${{ subtotal|floatformat:2 }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping:</span>
+                                    <span class="text-success">FREE</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax ({{ tax_rate|floatformat:0 }}%):</span>
+                                    <span>${{ tax_amount|floatformat:2 }}</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <strong class="h5">Total:</strong>
+                                    <strong class="h5 text-primary">${{ total|floatformat:2 }}</strong>
+                                </div>
+                            </div>
+                            
+                            <!-- Place Order Button -->
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mt-4" id="placeOrderBtn">
+                                <i class="fas fa-lock me-2"></i><span class="btn-text">Place Secure Order</span>
+                                <div class="loading-spinner"></div>
+                            </button>
+                            
+                            <!-- Security Badges -->
+                            <div class="security-info text-center mt-3">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <i class="fas fa-shield-alt text-success"></i>
+                                        <p class="small mb-0">SSL Secured</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fas fa-truck text-primary"></i>
+                                        <p class="small mb-0">Free Shipping</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fas fa-undo text-warning"></i>
+                                        <p class="small mb-0">Easy Returns</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Go Back to Cart -->
+                    <a href="{% url 'cart:view' %}" class="btn btn-outline-secondary w-100 rounded-pill">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-gradient-gold {
+        background: linear-gradient(45deg, var(--primary-gold), var(--secondary-gold));
+    }
+    
+    .bg-gradient-secondary {
+        background: linear-gradient(45deg, #6c757d, #5a6268);
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+    
+    .checkout-progress .progress-step {
+        position: relative;
+    }
+    
+    .step-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 1.2rem;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+    
+    .progress-step.completed .step-circle {
+        background: var(--primary-gold);
+        color: white;
+    }
+    
+    .progress-step.active .step-circle {
+        background: var(--primary-gold);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+    }
+    
+    .payment-option {
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .payment-option:hover {
+        border-color: var(--primary-gold);
+        background: rgba(212, 175, 55, 0.05);
+    }
+    
+    .payment-option input:checked + .payment-label {
+        color: var(--primary-gold);
+    }
+    
+    .payment-option:has(input:checked) {
+        border-color: var(--primary-gold);
+        background: rgba(212, 175, 55, 0.1);
+    }
+    
+    .payment-label {
+        width: 100%;
+        margin: 0;
+        cursor: pointer;
+    }
+    
+    .order-summary-section {
+        top: 2rem !important;
+    }
+    
+    .security-info {
+        background: rgba(212, 175, 55, 0.1);
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .order-summary-section {
+            position: static !important;
+        }
+        
+        .checkout-progress .step-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1rem;
+        }
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-gold);
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+    }
+    
+    .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .btn-primary.loading .loading-spinner {
+        display: inline-block;
+    }
+    
+    .btn-primary.loading .btn-text {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const sameAsShippingCheckbox = document.getElementById('sameAsShipping');
+    const billingSection = document.getElementById('billingSection');
+    
+    // Toggle billing address section
+    sameAsShippingCheckbox.addEventListener('change', function() {
+        billingSection.style.display = this.checked ? 'none' : 'block';
+    });
+    
+    // Handle form submission
+    checkoutForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Disable button and show loading
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.innerHTML = '<div class="loading-spinner me-2"></div><span class="btn-text">Processing Order...</span>';
+        
+        // Gather form data
+        const formData = new FormData(this);
+        
+        // If same as shipping is checked, copy shipping address to billing
+        if (sameAsShippingCheckbox.checked) {
+            formData.set('billing_address', formData.get('shipping_address'));
+        }
+        
+        // Submit order to proper Django URL
+        fetch('{% url "orders:create" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message and redirect
+                showAlert('success', data.message);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1500);
+            } else {
+                // Show error message
+                showAlert('error', data.message);
+                resetButton();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('error', 'An error occurred while processing your order. Please try again.');
+            resetButton();
+        });
+    });
+    
+    function resetButton() {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Place Secure Order';
+    }
+    
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Form validation
+    const requiredInputs = checkoutForm.querySelectorAll('input[required], textarea[required], select[required]');
+    requiredInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

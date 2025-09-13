@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmation #{{ order.id }} - Ornaments Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Success Header -->
+    <div class="text-center mb-5">
+        <div class="success-icon mb-4">
+            <i class="fas fa-check-circle fa-5x text-success"></i>
+        </div>
+        <h1 class="display-4 fw-bold text-success mb-3">Order Confirmed!</h1>
+        <p class="lead text-muted">Thank you for your purchase. Your order has been successfully placed.</p>
+        <div class="order-number-badge">
+            <span class="badge bg-primary rounded-pill px-4 py-2 fs-6">Order #{{ order.id }}</span>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Order Details -->
+        <div class="col-lg-8">
+            <!-- Order Status -->
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
+                <div class="card-header bg-gradient-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Status</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="status-item">
+                                <strong>Status:</strong>
+                                <span class="badge bg-warning text-dark ms-2">{{ order.get_status_display }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="status-item">
+                                <strong>Payment:</strong>
+                                <span class="badge bg-success ms-2">{{ order.get_payment_status_display }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="status-item">
+                                <strong>Order Date:</strong>
+                                <span class="ms-2">{{ order.created_at|date:"F d, Y at g:i A" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="status-item">
+                                <strong>Estimated Delivery:</strong>
+                                <span class="ms-2 text-primary">{{ estimated_delivery|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Items -->
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
+                <div class="card-header bg-gradient-gold text-white">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Items Ordered ({{ order.items.count }})</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for item in order.items.all %}
+                        <div class="order-item d-flex align-items-center p-4 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="item-image me-4">
+                                {% with first_image=item.product.images.first %}
+                                    {% if first_image %}
+                                        <img src="{{ first_image.image.url }}" 
+                                             alt="{{ item.product.name }}" 
+                                             class="img-fluid rounded-lg" style="width: 100px; height: 100px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="placeholder-image d-flex align-items-center justify-content-center rounded-lg"
+                                             style="width: 100px; height: 100px; background: #f8f9fa;">
+                                            <i class="fas fa-gem fa-2x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="item-details flex-grow-1">
+                                <h6 class="fw-bold mb-2">{{ item.product.name }}</h6>
+                                <p class="text-muted mb-2">{{ item.product.description|truncatewords:15 }}</p>
+                                <div class="item-meta">
+                                    <span class="badge bg-light text-dark rounded-pill me-2">{{ item.product.category.name }}</span>
+                                    <span class="badge bg-warning text-dark rounded-pill">{{ item.product.get_material_display }}</span>
+                                </div>
+                                <div class="item-pricing mt-2">
+                                    <span class="text-muted">Price: <strong>${{ item.price }}</strong></span>
+                                    <span class="text-muted ms-3">Quantity: <strong>{{ item.quantity }}</strong></span>
+                                </div>
+                            </div>
+                            <div class="item-total text-end">
+                                <strong class="h5 text-primary">${{ item.get_total_price|floatformat:2 }}</strong>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Delivery Information -->
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Delivery Information</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Shipping Address:</h6>
+                            <p class="text-muted">{{ order.shipping_address|linebreaksbr }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Contact Information:</h6>
+                            <p class="text-muted mb-1">{{ order.user.get_full_name|default:"" }}</p>
+                            <p class="text-muted mb-1">{{ order.user.email }}</p>
+                            {% if order.phone_number %}
+                                <p class="text-muted">{{ order.phone_number }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if order.special_instructions %}
+                        <div class="mt-3">
+                            <h6 class="fw-bold mb-2">Special Instructions:</h6>
+                            <p class="text-muted">{{ order.special_instructions }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="order-summary-sticky sticky-top" style="top: 2rem;">
+                <!-- Order Total -->
+                <div class="card border-0 shadow-lg rounded-lg mb-4">
+                    <div class="card-header bg-gradient-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Order Total</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="order-breakdown">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>${{ subtotal|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span class="text-success">${{ shipping|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tax:</span>
+                                <span>${{ tax_amount|floatformat:2 }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong class="h5">Total Paid:</strong>
+                                <strong class="h5 text-primary">${{ order.total_amount|floatformat:2 }}</strong>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Method -->
+                        <div class="payment-info mt-4 p-3 bg-light rounded">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-credit-card me-2 text-primary"></i>
+                                <div>
+                                    <small class="text-muted">Paid via</small>
+                                    <div class="fw-bold">{{ order.get_payment_method_display }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Next Steps -->
+                <div class="card border-0 shadow-lg rounded-lg mb-4">
+                    <div class="card-header bg-gradient-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i>What's Next?</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="timeline">
+                            <div class="timeline-item d-flex align-items-center mb-3">
+                                <div class="timeline-icon me-3">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                                <div>
+                                    <strong>Order Confirmed</strong>
+                                    <small class="text-muted d-block">Your order has been received</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item d-flex align-items-center mb-3">
+                                <div class="timeline-icon me-3">
+                                    <i class="fas fa-cog text-warning"></i>
+                                </div>
+                                <div>
+                                    <strong>Processing</strong>
+                                    <small class="text-muted d-block">We're preparing your items</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item d-flex align-items-center mb-3">
+                                <div class="timeline-icon me-3">
+                                    <i class="fas fa-truck text-primary"></i>
+                                </div>
+                                <div>
+                                    <strong>Shipped</strong>
+                                    <small class="text-muted d-block">We'll send tracking info</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item d-flex align-items-center">
+                                <div class="timeline-icon me-3">
+                                    <i class="fas fa-home text-info"></i>
+                                </div>
+                                <div>
+                                    <strong>Delivered</strong>
+                                    <small class="text-muted d-block">Est. {{ estimated_delivery|date:"M d" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="action-buttons">
+                    <a href="{% url 'orders:history' %}" class="btn btn-outline-primary w-100 rounded-pill mb-2">
+                        <i class="fas fa-list me-2"></i>View Order History
+                    </a>
+                    <a href="{% url 'products:list' %}" class="btn btn-primary w-100 rounded-pill">
+                        <i class="fas fa-gem me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Email Notification -->
+    <div class="email-notification text-center mt-5 p-4 bg-light rounded-lg">
+        <div class="d-flex align-items-center justify-content-center mb-3">
+            <i class="fas fa-envelope fa-2x text-primary me-3"></i>
+            <div class="text-start">
+                <strong>Confirmation Email Sent</strong>
+                <p class="mb-0 text-muted">We've sent order details to {{ order.user.email }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-gradient-success {
+        background: linear-gradient(45deg, #28a745, #20c997);
+    }
+    
+    .bg-gradient-gold {
+        background: linear-gradient(45deg, var(--primary-gold), var(--secondary-gold));
+    }
+    
+    .bg-gradient-info {
+        background: linear-gradient(45deg, #17a2b8, #138496);
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(45deg, #ffc107, #e0a800);
+    }
+    
+    .success-icon {
+        animation: bounceIn 1s ease-out;
+    }
+    
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .order-number-badge {
+        margin-top: 1rem;
+    }
+    
+    .status-item {
+        padding: 10px 0;
+    }
+    
+    .order-item {
+        transition: background-color 0.3s ease;
+    }
+    
+    .order-item:hover {
+        background-color: rgba(0,0,0,0.02);
+    }
+    
+    .timeline-item {
+        position: relative;
+    }
+    
+    .timeline-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 11px;
+        top: 30px;
+        height: 20px;
+        width: 2px;
+        background: #dee2e6;
+    }
+    
+    .timeline-icon {
+        width: 24px;
+        text-align: center;
+    }
+    
+    .order-summary-sticky {
+        top: 2rem !important;
+    }
+    
+    .email-notification {
+        border: 2px dashed #007bff;
+        background: linear-gradient(135deg, rgba(0,123,255,0.1), rgba(0,123,255,0.05));
+    }
+    
+    @media (max-width: 768px) {
+        .order-summary-sticky {
+            position: static !important;
+        }
+        
+        .display-4 {
+            font-size: 2rem;
+        }
+        
+        .success-icon i {
+            font-size: 3rem !important;
+        }
+    }
+    
+    .placeholder-image {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+    
+    .card {
+        transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add confetti effect (optional - can be enabled with a library)
+    // For now, just a simple celebration animation
+    setTimeout(() => {
+        const successIcon = document.querySelector('.success-icon i');
+        if (successIcon) {
+            successIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                successIcon.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }, 500);
+    
+    // Print order functionality (if needed)
+    function printOrder() {
+        window.print();
+    }
+    
+    // Copy order number to clipboard
+    function copyOrderNumber() {
+        const orderNumber = '{{ order.id }}';
+        navigator.clipboard.writeText(orderNumber).then(() => {
+            // Show temporary success message
+            const badge = document.querySelector('.order-number-badge');
+            const originalHTML = badge.innerHTML;
+            badge.innerHTML = '<span class="badge bg-success rounded-pill px-4 py-2 fs-6">Copied!</span>';
+            setTimeout(() => {
+                badge.innerHTML = originalHTML;
+            }, 2000);
+        });
+    }
+    
+    // Add click handler to order number badge for copying
+    document.querySelector('.order-number-badge')?.addEventListener('click', copyOrderNumber);
+});
+</script>
+{% endblock %}

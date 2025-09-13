@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order History - Ornaments Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="fw-bold mb-0">
+                    <i class="fas fa-history me-3 text-primary"></i>Order History
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}" class="text-decoration-none">Account</a></li>
+                        <li class="breadcrumb-item active">Order History</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+    {% if orders %}
+        <div class="row">
+            {% for order in orders %}
+                <div class="col-12">
+                    <div class="card order-card border-0 shadow-sm rounded-lg mb-4">
+                        <div class="card-header bg-gradient-gold text-white">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-receipt me-2"></i>
+                                        Order #{{ order.id }}
+                                    </h5>
+                                    <small class="opacity-75">{{ order.created_at|date:"F d, Y at g:i A" }}</small>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'processing' %}warning{% elif order.status == 'cancelled' %}danger{% else %}secondary{% endif %} fs-6">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <!-- Order Items Preview -->
+                                <div class="col-lg-8">
+                                    <div class="order-items-preview">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <h6 class="fw-bold mb-0">Items ({{ order.items.count }})</h6>
+                                        </div>
+                                        <div class="row g-3">
+                                            {% for item in order.items.all|slice:":3" %}
+                                                <div class="col-md-4">
+                                                    <div class="item-preview d-flex align-items-center">
+                                                        <div class="item-image me-3">
+                                                            {% with first_image=item.product.images.first %}
+                                                                {% if first_image %}
+                                                                    <img src="{{ first_image.image.url }}" 
+                                                                         alt="{{ item.product.name }}" 
+                                                                         class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                                {% else %}
+                                                                    <div class="placeholder-mini d-flex align-items-center justify-content-center rounded"
+                                                                         style="width: 50px; height: 50px; background: #f8f9fa;">
+                                                                        <i class="fas fa-gem text-muted"></i>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                        </div>
+                                                        <div class="item-details">
+                                                            <div class="fw-bold small">{{ item.product.name|truncatechars:20 }}</div>
+                                                            <div class="text-muted small">Qty: {{ item.quantity }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                            {% if order.items.count > 3 %}
+                                                <div class="col-md-4">
+                                                    <div class="more-items d-flex align-items-center justify-content-center text-muted">
+                                                        <i class="fas fa-plus-circle me-2"></i>
+                                                        {{ order.items.count|add:"-3" }} more item{{ order.items.count|add:"-3"|pluralize }}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Order Summary -->
+                                <div class="col-lg-4">
+                                    <div class="order-summary">
+                                        <div class="total-section mb-3">
+                                            <h5 class="text-primary fw-bold">${{ order.total_amount|floatformat:2 }}</h5>
+                                            <small class="text-muted">Total Amount</small>
+                                        </div>
+                                        
+                                        <div class="order-meta mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <small class="text-muted">Payment:</small>
+                                                    <div class="fw-bold">
+                                                        <span class="badge bg-{% if order.payment_status == 'paid' %}success{% elif order.payment_status == 'pending' %}warning{% else %}secondary{% endif %} small">
+                                                            {{ order.get_payment_status_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <small class="text-muted">Method:</small>
+                                                    <div class="fw-bold small">{{ order.get_payment_method_display }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="order-actions">
+                                            <a href="{% url 'orders:detail' order.id %}" class="btn btn-outline-primary btn-sm rounded-pill me-2 mb-2">
+                                                <i class="fas fa-eye me-1"></i>View Details
+                                            </a>
+                                            {% if order.status != 'cancelled' and order.status != 'delivered' %}
+                                                <button class="btn btn-outline-secondary btn-sm rounded-pill mb-2" data-bs-toggle="modal" data-bs-target="#trackOrderModal{{ order.id }}">
+                                                    <i class="fas fa-truck me-1"></i>Track Order
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Track Order Modal -->
+                <div class="modal fade" id="trackOrderModal{{ order.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Track Order #{{ order.id }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="tracking-timeline">
+                                    <div class="timeline-item d-flex align-items-center mb-3">
+                                        <div class="timeline-icon me-3">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        </div>
+                                        <div>
+                                            <strong>Order Placed</strong>
+                                            <small class="text-muted d-block">{{ order.created_at|date:"M d, Y - g:i A" }}</small>
+                                        </div>
+                                    </div>
+                                    {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}
+                                        <div class="timeline-item d-flex align-items-center mb-3">
+                                            <div class="timeline-icon me-3">
+                                                <i class="fas fa-cog text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <strong>Processing</strong>
+                                                <small class="text-muted d-block">Order is being prepared</small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                        <div class="timeline-item d-flex align-items-center mb-3">
+                                            <div class="timeline-icon me-3">
+                                                <i class="fas fa-truck text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>Shipped</strong>
+                                                <small class="text-muted d-block">Order is on the way</small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if order.status == 'delivered' %}
+                                        <div class="timeline-item d-flex align-items-center">
+                                            <div class="timeline-icon me-3">
+                                                <i class="fas fa-home text-success"></i>
+                                            </div>
+                                            <div>
+                                                <strong>Delivered</strong>
+                                                <small class="text-muted d-block">Order has been delivered</small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{% url 'orders:detail' order.id %}" class="btn btn-primary">View Full Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <nav aria-label="Order history pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link rounded-pill me-1" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link rounded-pill mx-1">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link rounded-pill mx-1" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link rounded-pill ms-1" href="?page={{ page_obj.next_page_number }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-orders text-center py-5">
+            <div class="empty-icon mb-4">
+                <i class="fas fa-shopping-bag fa-5x text-muted opacity-50"></i>
+            </div>
+            <h3 class="fw-bold mb-3">No Orders Yet</h3>
+            <p class="text-muted mb-4">You haven't placed any orders yet. Start shopping to see your order history here!</p>
+            <a href="{% url 'products:list' %}" class="btn btn-primary btn-lg rounded-pill">
+                <i class="fas fa-gem me-2"></i>Start Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-gradient-gold {
+        background: linear-gradient(45deg, var(--primary-gold), var(--secondary-gold));
+    }
+    
+    .order-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--primary-gold);
+    }
+    
+    .order-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .item-preview {
+        padding: 8px;
+        border-radius: 8px;
+        background: rgba(0,0,0,0.02);
+        transition: background-color 0.3s ease;
+    }
+    
+    .item-preview:hover {
+        background: rgba(0,0,0,0.05);
+    }
+    
+    .more-items {
+        height: 66px;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .timeline-item {
+        position: relative;
+    }
+    
+    .timeline-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 11px;
+        top: 30px;
+        height: 20px;
+        width: 2px;
+        background: #dee2e6;
+    }
+    
+    .timeline-icon {
+        width: 24px;
+        text-align: center;
+    }
+    
+    .breadcrumb {
+        background: none;
+        padding: 0;
+    }
+    
+    .breadcrumb-item a {
+        color: var(--primary-gold);
+    }
+    
+    .empty-icon {
+        opacity: 0.3;
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .page-link {
+        color: var(--primary-gold);
+        border: 1px solid var(--primary-gold);
+    }
+    
+    .page-link:hover {
+        background: var(--primary-gold);
+        border-color: var(--primary-gold);
+        color: white;
+    }
+    
+    .page-item.active .page-link {
+        background: var(--primary-gold);
+        border-color: var(--primary-gold);
+    }
+    
+    @media (max-width: 768px) {
+        .order-card .card-header .row {
+            text-align: center;
+        }
+        
+        .order-card .card-header .col-md-6:last-child {
+            text-align: center !important;
+            margin-top: 1rem;
+        }
+        
+        .item-preview {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scroll animations
+    const orderCards = document.querySelectorAll('.order-card');
+    
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(20px)';
+                entry.target.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    orderCards.forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}
