@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Premium Jewelry & Ornaments - Ornaments Store{% endblock %}
 
@@ -26,9 +27,15 @@
             </div>
             <div class="col-lg-6 text-center">
                 <div class="position-relative">
-                    <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center" 
-                         style="width: 300px; height: 300px; opacity: 0.1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                    <i class="fas fa-gem" style="font-size: 8rem; color: var(--primary-gold); position: relative; z-index: 1;"></i>
+                    <div class="hero-jewelry-showcase">
+                        <img src="{% static 'images/Gold_necklace_luxury_jewelry_ae92c463.png' %}" alt="Luxury Jewelry Collection" class="img-fluid rounded-circle hero-main-image">
+                        <div class="floating-jewelry floating-jewelry-1">
+                            <img src="{% static 'images/Gold_drop_earrings_luxury_0b12974e.png' %}" alt="Gold Earrings" class="img-fluid">
+                        </div>
+                        <div class="floating-jewelry floating-jewelry-2">
+                            <img src="{% static 'images/Golden_bangles_luxury_jewelry_bd905fe5.png' %}" alt="Gold Bangles" class="img-fluid">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,8 +54,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-circle fa-3x" style="color: var(--rose-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Golden_bangles_luxury_jewelry_bd905fe5.png' %}" alt="Golden Bangles" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Bangles</h6>
                     </div>
@@ -57,8 +64,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-circle fa-3x" style="color: var(--primary-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Gold_anklets_luxury_jewelry_368c21b5.png' %}" alt="Gold Anklets" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Anklets</h6>
                     </div>
@@ -67,8 +74,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-link fa-3x" style="color: var(--secondary-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Gold_bracelets_luxury_jewelry_4bb08424.png' %}" alt="Gold Bracelets" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Bracelets</h6>
                     </div>
@@ -77,8 +84,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-yin-yang fa-3x" style="color: var(--rose-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Gold_drop_earrings_luxury_0b12974e.png' %}" alt="Gold Drop Earrings" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Earrings</h6>
                     </div>
@@ -87,8 +94,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-necklace fa-3x" style="color: var(--primary-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Gold_necklace_luxury_jewelry_ae92c463.png' %}" alt="Gold Necklace" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Necklaces</h6>
                     </div>
@@ -97,8 +104,8 @@
             <div class="col-lg-2 col-md-4 col-6">
                 <div class="card h-100 border-0 text-center category-card">
                     <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-ring fa-3x" style="color: var(--secondary-gold);"></i>
+                        <div class="category-image-wrapper mb-3">
+                            <img src="{% static 'images/Gold_rings_collection_luxury_7dd17464.png' %}" alt="Gold Rings Collection" class="img-fluid category-image">
                         </div>
                         <h6 class="card-title">Rings</h6>
                     </div>
@@ -180,17 +187,135 @@
     .category-card {
         transition: all 0.3s ease;
         cursor: pointer;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
     
     .category-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+    }
+    
+    .category-image-wrapper {
+        width: 100%;
+        height: 120px;
+        overflow: hidden;
+        border-radius: 15px;
+        position: relative;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .category-image {
+        max-width: 90px;
+        max-height: 90px;
+        object-fit: contain;
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    }
+    
+    .category-card:hover .category-image {
+        transform: scale(1.1);
+        filter: drop-shadow(0 8px 16px rgba(212, 175, 55, 0.4));
     }
     
     .hero-section {
         min-height: 60vh;
         display: flex;
         align-items: center;
+    }
+    
+    .hero-jewelry-showcase {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .hero-main-image {
+        width: 280px;
+        height: 280px;
+        object-fit: cover;
+        border: 8px solid white;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        filter: drop-shadow(0 10px 20px rgba(212, 175, 55, 0.3));
+    }
+    
+    .floating-jewelry {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .floating-jewelry img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    
+    .floating-jewelry-1 {
+        top: -20px;
+        right: -30px;
+        animation-delay: 0s;
+    }
+    
+    .floating-jewelry-2 {
+        bottom: 20px;
+        left: -40px;
+        animation-delay: 1.5s;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero-main-image {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .floating-jewelry {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .floating-jewelry-1 {
+            top: -10px;
+            right: -20px;
+        }
+        
+        .floating-jewelry-2 {
+            bottom: 10px;
+            left: -20px;
+        }
+        
+        .category-image-wrapper {
+            height: 100px;
+        }
+        
+        .category-image {
+            max-width: 70px;
+            max-height: 70px;
+        }
+    }
+    
+    .categories-section {
+        background: radial-gradient(ellipse at center, rgba(245, 245, 220, 0.3) 0%, transparent 70%);
     }
 </style>
 {% endblock %}
