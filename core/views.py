@@ -8,6 +8,26 @@ from .forms import ContactForm
 
 class HomeView(TemplateView):
     template_name = 'core/home.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Import here to avoid circular imports
+        from products.models import Product, Category
+        
+        # Get featured products for carousel
+        context['featured_products'] = Product.objects.filter(
+            is_active=True, is_featured=True
+        ).select_related('category').prefetch_related('images')[:8]
+        
+        # Get recent products for carousel
+        context['recent_products'] = Product.objects.filter(
+            is_active=True
+        ).select_related('category').prefetch_related('images').order_by('-created_at')[:8]
+        
+        # Get categories for display
+        context['categories'] = Category.objects.filter(is_active=True)[:6]
+        
+        return context
 
 
 class AboutView(TemplateView):
