@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-)w&o!1(fgu(hewy=)r8p*y)bcht(^ciayxk(ox!v8xib+e=-1i')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -83,13 +86,8 @@ WSGI_APPLICATION = 'ornaments_store.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'URL': os.environ.get('DATABASE_URL'),
-        'NAME': os.environ.get('PGDATABASE'),
-        'USER': os.environ.get('PGUSER'),
-        'PASSWORD': os.environ.get('PGPASSWORD'),
-        'HOST': os.environ.get('PGHOST'),
-        'PORT': os.environ.get('PGPORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -126,8 +124,8 @@ USE_TZ = True
 
 
 # Razorpay Configuration
-RAZORPAY_API_KEY = os.environ.get('RAZORPAY_API_KEY', 'rzp_test_11111111111111')  # Use environment variable or fallback for testing
-RAZORPAY_API_SECRET = os.environ.get('RAZORPAY_API_SECRET', 'test_secret_key_11111111111111')  # Use environment variable or fallback for testing
+RAZORPAY_API_KEY = os.environ.get('RAZORPAY_API_KEY')
+RAZORPAY_API_SECRET = os.environ.get('RAZORPAY_API_SECRET')
 
 # Enable popups (prevents payment popup blocking)
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"

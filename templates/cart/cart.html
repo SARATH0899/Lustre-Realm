@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cart_filters %}
 
 {% block title %}Shopping Cart - Ornaments Store{% endblock %}
 
@@ -145,7 +146,7 @@
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted">Tax</span>
-                                    <span class="fw-bold" id="tax">${{ cart_total|floatformat:2|mul:0.08 }}</span>
+                                    <span class="fw-bold" id="tax">${{ cart_total|mul:0.08|floatformat:2 }}</span>
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -450,13 +451,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update order summary
     function updateOrderSummary(cartTotal) {
-        const subtotal = cartTotal;
-        const tax = cartTotal * 0.08;
+        // Ensure cartTotal is a number
+        const subtotal = parseFloat(cartTotal) || 0;
+        // Calculate tax (8% of subtotal)
+        const tax = subtotal * 0.08;
+        // Calculate total (subtotal + tax)
         const total = subtotal + tax;
         
+        // Update the DOM with formatted currency values
         document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
         document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
         document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        
+        // Update any cart count indicators
+        const cartCountElements = document.querySelectorAll('.cart-count');
+        if (cartCountElements.length > 0) {
+            const cartCount = document.querySelectorAll('.cart-item-card').length;
+            cartCountElements.forEach(el => {
+                el.textContent = cartCount;
+                el.style.display = cartCount > 0 ? 'inline-block' : 'none';
+            });
+        }
     }
     
     // Get CSRF token

@@ -21,7 +21,7 @@ class CartView(View):
             
         context = {
             'cart_items': cart_items,
-            'cart_total': sum(item.get_total_price() for item in cart_items) if cart_items else 0
+            'cart_total': sum(item.total_price for item in cart_items) if cart_items else 0
         }
         return render(request, 'cart/cart.html', context)
     
@@ -38,7 +38,8 @@ class CartView(View):
                         self.product = product
                         self.quantity = quantity
                     
-                    def get_total_price(self):
+                    @property
+                    def total_price(self):
                         return self.product.discounted_price * self.quantity
                 
                 cart_items.append(SessionCartItem(product, quantity))
