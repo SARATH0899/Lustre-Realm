@@ -7,11 +7,12 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView as DjangoLoginView, LogoutView as DjangoLogoutView
 from .models import User, Address
-from .forms import UserRegistrationForm, UserProfileForm, AddressForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, AddressForm
 
 
 class LoginView(DjangoLoginView):
     template_name = 'accounts/login.html'
+    form_class = UserLoginForm
     redirect_authenticated_user = True
     
     def form_valid(self, form):
